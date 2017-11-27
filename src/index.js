@@ -44,6 +44,12 @@ const argvOptions = [{
         type: 'path',
         description: 'Save the resulting SVG to a file',
         example: "'sqip --output=/foo/bar/image.svg' or 'sqip -o /foo/bar/image.svg'"
+    },
+    {
+        name: 'svg',
+        type: 'boolean',
+        description: 'Return the resulting SVG as stdout',
+        example: "'sqip --svg'"
     }
 ];
 const getArguments = () => argv.option(argvOptions).run();
@@ -184,11 +190,16 @@ module.exports.run = () => {
     const { targets, options } = getArguments();
     const filename = getInputfilePath(targets);
     const { final_svg, svg_base64encoded, img_dimensions } = main(filename, options);
-    const output = getOutputFilePath();
+    
+    if(options.svg) {
+        console.log(final_svg);
+    } else {
+        const output = getOutputFilePath();
 
-    output ?
-        writeSVGOutput(output, final_svg) :
-        printFinalResult(img_dimensions, filename, svg_base64encoded);
+        output ?
+            writeSVGOutput(output, final_svg) :
+            printFinalResult(img_dimensions, filename, svg_base64encoded);
+    }
 };
 
 
